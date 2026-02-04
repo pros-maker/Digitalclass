@@ -13,18 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # -------------------------
+      # Checkout repository
+      # -------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # -------------------------
+      # Set up Python
+      # -------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install MkDocs & Material theme
+      # -------------------------
+      # Install MkDocs + Material + Plugins
+      # -------------------------
+      - name: Install MkDocs and dependencies
         run: |
-          pip install mkdocs mkdocs-material \
-          mkdocs-git-revision-date-localized-plugin
+          pip install mkdocs
+          pip install mkdocs-material
+          pip install mkdocs-git-revision-date-localized-plugin
 
-      - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --clean
+      # -------------------------
+      # Deploy to GitHub Pages
+      # -------------------------
+      - name: Deploy site
+        run: mkdocs gh-deploy --clean --force
