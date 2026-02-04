@@ -1,0 +1,36 @@
+name: Publish Site to gh-pages
+
+on:
+  workflow_dispatch:    # Manual trigger
+  push:
+    branches:
+      - main            # Auto trigger on pushes to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout main branch
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # Needed for gh-pages branch push
+
+      # Configure Git user
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Delete old gh-pages branch (optional but clean)
+      - name: Delete old gh-pages branch
+        run: |
+          git branch -D gh-pages || true
+          git push origin --delete gh-pages || true
+
+      # Create gh-pages branch with site content
+      - name: Push site to gh-pages
+        run: |
+          git checkout --orphan gh-pages
+          git --work-tree=site add --all
+          git --work-tree=site commit -m "Deploy site from main"
+          git push origin gh-pages --force
